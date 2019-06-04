@@ -1,17 +1,16 @@
 package Lesson_1.Marafon;
 
+import Lesson_1.Marafon.competitors.*;
+import Lesson_1.Marafon.obstacles.Course;
+import Lesson_1.Marafon.obstacles.Cross;
+import Lesson_1.Marafon.obstacles.Obstacle;
+import Lesson_1.Marafon.obstacles.Wall;
+
 public class Main {
     public static void main(String[] args) {
-        Competitor[] competitors = {new Human("Боб"), new Cat("Барсик"), new Dog("Бобик")};
-        Obstacle[] course = {new Cross(80), new Wall(2), new Wall(1), new Cross(120)};
-        for (Competitor c : competitors) {
-            for (Obstacle o : course) {
-                o.doIt(c);
-                if (!c.isOnDistance()) break;
-            }
-        }
-        for (Competitor c : competitors) {
-            c.info();
-        }
+        Course course = new Course();
+        Team team = new Team("Hotdogs");
+        course.runThroughCourse(team);
+        team.showResults();
     }
 }
