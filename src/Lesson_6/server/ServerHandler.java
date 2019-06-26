@@ -22,7 +22,7 @@ public class ServerHandler {
             while (true) {
                 socket = server.accept();
                 System.out.println("Client connected!");
-                clients.add(new ClientHandler(socket, this));
+                subscribe(new ClientHandler(socket, this));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,19 +38,13 @@ public class ServerHandler {
                 e.printStackTrace();
             }
         }
-
-
-
     }
 
-    public void printAllClients() {
-        for (ClientHandler o : clients) {
-            System.out.println("Client - " + o.toString());
-        }
+    public void subscribe (ClientHandler client) {
+        clients.add(client);
     }
-
-    public void closeCurrentClient(ClientHandler clientToRemove) {
-        clients.remove(clientToRemove);
+    public void unsubscribe(ClientHandler client) {
+        clients.remove(client);
     }
 
     public void broadCastMsg(String msg) {
@@ -59,7 +53,4 @@ public class ServerHandler {
         }
     }
 
-    public Vector<ClientHandler> getClients() {
-        return clients;
-    }
 }

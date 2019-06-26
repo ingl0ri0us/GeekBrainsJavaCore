@@ -13,14 +13,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Chat");
-        primaryStage.setScene(new Scene(root, 300, 600));
+        primaryStage.setScene(new Scene(root, 400, 600));
         primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> handleExit());
-    }
-
-    private void handleExit() {
-        Platform.exit();
-        System.exit(0);
     }
 
     public static void main(String[] args) {

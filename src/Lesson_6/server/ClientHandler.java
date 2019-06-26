@@ -25,10 +25,8 @@ public class ClientHandler {
                     try {
                         while (true) {
                             String inputString = in.readUTF();
-                            if (inputString.equals("/print")) {
-                                server.printAllClients();
-                            }
                             if (inputString.equals("/end")) {
+                                out.writeUTF("/serverclosed");
                                 break;
                             }
                             server.broadCastMsg(inputString);
@@ -52,6 +50,7 @@ public class ClientHandler {
                             e.printStackTrace();
                         }
                     }
+                    server.unsubscribe(ClientHandler.this);
                 }
             }).start();
         } catch (Exception e) {
@@ -66,9 +65,5 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public Socket getSocket() {
-        return socket;
     }
 }

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,12 +21,6 @@ public class Controller implements Initializable {
 
     @FXML
     TextField messageField;
-
-    @FXML
-    public void exitApplication(ActionEvent event) {
-        closeConnection();
-        Platform.exit();
-    }
 
     Socket socket;
     DataInputStream in;
@@ -48,6 +43,9 @@ public class Controller implements Initializable {
                     try {
                         while (true) {
                             String inputString = in.readUTF();
+                            if(inputString.equals("/serverclosed")){
+                                break;
+                            }
                             textArea.appendText(inputString + "\n");
                         }
 
@@ -67,14 +65,6 @@ public class Controller implements Initializable {
         }
     }
 
-    public void closeConnection () {
-        try {
-            in.close();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     public void sendMessage () {
         try {
             out.writeUTF(messageField.getText());
@@ -84,4 +74,11 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
     }
+
+    /*@FXML
+    private void closeButtonAction() {
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        out.writeUTF("/close");
+        stage.close();
+    }*/
 }
