@@ -16,13 +16,16 @@ public class ServerHandler {
         Socket socket = null;
 
         try {
+            AuthService.connection();
+//            String str = AuthService.getNickByLoginAndPass("login1", "pass1");
+//            System.out.println(str);
             server = new ServerSocket(8189);
             System.out.println("Server started!");
 
             while (true) {
                 socket = server.accept();
                 System.out.println("Client connected!");
-                subscribe(new ClientHandler(socket, this));
+                new ClientHandler(socket, this);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,6 +40,7 @@ public class ServerHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            AuthService.disconnect();
         }
     }
 
@@ -52,5 +56,20 @@ public class ServerHandler {
             o.sendMsg(msg);
         }
     }
+    public void privateMessage(String senderNick, String privateNick, String msg) {
+        for (ClientHandler o : clients) {
+            if (o.getNick().startsWith(privateNick)) {
+                o.sendMsg(senderNick + " : " + msg);
+            }
+        }
+    }
 
+    public boolean alreadyConnected(String nickToCheck) {
+        for (ClientHandler o : clients) {
+            if(o.getNick().equals(nickToCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

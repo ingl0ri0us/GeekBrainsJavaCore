@@ -11,6 +11,7 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private ServerHandler server;
+    private String nick;
 
     public ClientHandler(Socket socket, ServerHandler server) {
         try {
@@ -23,13 +24,38 @@ public class ClientHandler {
                 @Override
                 public void run() {
                     try {
+                        while(true) {
+                            String inputString = in.readUTF();
+                            if (inputString.startsWith("/auth")) {
+                                String [] tokens = inputString.split(" ");
+                                String newNick = AuthService.getNickByLoginAndPass(tokens[1], tokens[2]);
+                                if(server.alreadyConnected(newNick)) {
+                                    sendMsg("User already connected!");
+                                } else if(newNick != null && !server.alreadyConnected(newNick)) {
+                                    sendMsg("/authok");
+                                    nick = newNick;
+                                    server.subscribe(ClientHandler.this);
+                                    break;
+                                } else {
+                                    sendMsg("Wrong login/password!");
+                                }
+                            }
+                            //server.broadCastMsg(inputString);
+                        }
+
                         while (true) {
                             String inputString = in.readUTF();
                             if (inputString.equals("/end")) {
                                 out.writeUTF("/serverclosed");
                                 break;
                             }
-                            server.broadCastMsg(inputString);
+                            if (inputString.startsWith("/w")) {
+                                String [] splitedMsg = inputString.split(" ");
+                                server.privateMessage(nick,splitedMsg[1],splitedMsg[2]);
+                            } else {
+                                server.broadCastMsg(nick + ":" + inputString);
+                            }
+
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -65,5 +91,9 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getNick() {
+        return nick;
     }
 }
